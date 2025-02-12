@@ -5,14 +5,7 @@ pipeline {
         DOCKER_IMAGE = 'priya290/my-java'
         DOCKER_CREDENTIALS_ID = 'docker-hub'
     }
-    stages {
-        stage('Login') {
-            steps {
-                withDockerRegistry([credentialsId: DOCKER_CREDENTIALS_ID, url: 'https://hub.docker.com/']) {
-                    sh 'echo "Docker login successful"'
-                }
-            }
-        }
+  
     stages {
         stage('Checkout Code') {
             steps {
@@ -36,7 +29,7 @@ pipeline {
 
         stage('Push Docker Image to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME', url: 'https://hub.docker.com')]) {
                     sh '''
                         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
                         docker push ${DOCKER_IMAGE}
@@ -52,4 +45,4 @@ pipeline {
         }
     }
 }
-}
+
